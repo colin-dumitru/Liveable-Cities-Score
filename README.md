@@ -1,6 +1,6 @@
 ## Description
 
-The "Livable Cities Score" package is a collection of checklist and tools used to evaluate if a particular building is within a zone that is pedestrian friendly. It includes comprehensive checklists that can be used to evaluate whether a building has amenities within walking distance and if the surrounding area is conducive to walking and pedestrian safety.
+The "Livable Cities Score" package is a collection of checklists and tools used to evaluate if a particular building is within a zone that is pedestrian friendly. It includes comprehensive checklists that can be used to evaluate whether a building has amenities within walking distance and if the surrounding area is conducive to walking and pedestrian safety.
 
 ## Usage
 
