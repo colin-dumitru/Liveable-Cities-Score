@@ -6,16 +6,16 @@
 ## Distance-based scoring.
 
 Scoring based on distance is calculated as the base point multiplier times the distance score (DS), generated using the rules from below. For example, for a venue that is 7 minutes away with a base multiplier of 3, the final score will be 0.5 x 3pt = 1.5pt.
-* [<= 5 minutes walking] = 1 (full base points)
-* [> 5 minutes walking (and) <= 10 minutes walking] = 0.5 (half base points)
-* [> 10 minutes walking (and) <= 20 minutes walking] = 0.25 (quarter base points)
+* [up to 5 minutes walking] = 1 (full base points)
+* [up to 25 minutes walking] = (25 - time) / 20 (lose 0.1 points for every 2 minutes walking)
+* [more than 25 minutes] = 0
 
 ## Infrastructure and Transport
 - [ ] (3pt) Building is accompanied by a pedestrian sidewalk (at least 1m wide) or pedestrian-only walkway
   - [ ] (1pt) Sidewalk is at least 2m wide
   - [ ] (1pt) Sidewalk has no-parking enforced through physical barriers or pylons. Street parking is allowed, as long as it's not on the sidewalk. Item is checked if no vehicle traffic is allowed.
   - [ ] (1pt) Sidewalk is protected by street parking. Item is checked if no vehicle traffic is allowed.
-- [ ] (3pt) Street access to dedicated bicycle lane (at least 1.5m wide)
+- [ ] (3pt) Street access to dedicated bicycle lane (at least 1.5m wide; at most 20m from building entrance)
   - [ ] (1pt) Bike lane is protected from motor-vehicle and pedestrian traffic.
 - [ ] (3pt x DS) Nearby public transit stop
   - [ ] (2pt) Transport stop provides access to 90% of other transport stops within the same city with a maximum of 2 line changes
