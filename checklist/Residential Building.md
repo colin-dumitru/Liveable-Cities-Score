@@ -15,14 +15,15 @@ Scoring based on distance is calculated as the base point multiplier times the d
   - [ ] (1pt) Sidewalk is at least 2m wide
   - [ ] (1pt) Sidewalk has no-parking enforced through physical barriers or pylons. Street parking is allowed, as long as it's not on the sidewalk. Item is checked if no vehicle traffic is allowed.
   - [ ] (1pt) Sidewalk is protected by street parking. Item is checked if no vehicle traffic is allowed.
+  - [ ] (1pt) Sidewalk is illuminated
 - [ ] (3pt) Street access to dedicated bicycle lane (at least 1.5m wide; at most 20m from building entrance)
   - [ ] (1pt) Bike lane is protected from motor-vehicle and pedestrian traffic.
+  - [ ] (1pt) Bike lane is illuminated
 - [ ] (3pt x DS) Nearby public transit stop
   - [ ] (2pt) Transport stop provides access to 90% of other transport stops within the same city with a maximum of 2 line changes
 - [ ] (2pt) If there are dedicated roads for cars, the lanes use traffic-calming strategies. Item is checked if no vehicle traffic is allowed.
 - [ ] (2pt) If there are dedicated roads for cars, the speed limit is set to a maximum of 30Km/h. Item is checked if no vehicle traffic is allowed.
   - [ ] (1pt) If the speed limit is 15Km/h.
-- [ ] (2pt) Pedestrian or bike lanes have street illumination.
 - [ ] (2pt) Pedestrian crossings have ramp access and are wheelchair accessible
 - [ ] (2pt x DS) Nearby station  for shared bicycle or small electric vehicles (i.e. scooters)
 
