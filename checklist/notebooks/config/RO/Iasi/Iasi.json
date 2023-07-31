@@ -1,3 +1,9 @@
 {
-    "placeId": "Iasi, Iasi, RO"
+    "placeId": "Iasi, Iasi, RO",
+    "defaults": {
+        "sidewalk_width": 1.0,
+        "sidewalk_lit": "no",
+        "bikepath_width": 1.0,
+        "bikepath_lit": "no"
+    }
 }
