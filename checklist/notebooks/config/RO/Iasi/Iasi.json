@@ -1,5 +1,5 @@
 {
-    "placeId": "Copou, Iasi, Iasi, RO",
+    "placeId": "Iasi, Iasi, RO",
     "defaults": {
         "maxspeed": 50,
         "sidewalk_width": 1.0,
@@ -8,6 +8,6 @@
         "bikepath_lit": "no"
     },
     "parameters": {
-        "RO:urban": 50
+        "ro:urban": 50
     }
 }
