@@ -1,5 +1,9 @@
 {
     "placeId": "Iasi, Iasi, RO",
+    "name": "Iasi",
+    "globals": {
+        "yearly_aqi": 100
+    },
     "defaults": {
         "maxspeed": 50,
         "sidewalk_width": 1.0,
