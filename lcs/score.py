@@ -174,12 +174,7 @@ class LCSQueryEngine:
 
         if node.get('edges_walk_dist', 1000) < INFRASTRUCTURE_CUTOFF_DIST:
             closest_street = node['edges_walk']
-            sidewalk_width = self._get_value(closest_street, 'width', self.default_sidewalk_width)
-
-            if type(sidewalk_width) is list:
-                sidewalk_width = sidewalk_width[0]
-
-            sidewalk_width = float(sidewalk_width)
+            sidewalk_width = self._get_width(closest_street, 'width', self.default_sidewalk_width)
 
             if sidewalk_width < 1:
                 return total_score
@@ -209,7 +204,7 @@ class LCSQueryEngine:
         if node.get('edges_bike_dist', 1000) < INFRASTRUCTURE_CUTOFF_DIST:
             closest_path = node['edges_bike']
 
-            if float(self._get_value(closest_path, 'width', self.default_bikepath_width)) < 1.5:
+            if float(self._get_width(closest_path, 'width', self.default_bikepath_width)) < 1.5:
                 return total_score
             
             total_score += 3
@@ -262,6 +257,22 @@ class LCSQueryEngine:
                 max_speed = default_value
         
         return max_speed
+    
+    def _get_width(self, node, attr_name, default_value):
+        width = self._get_value(node, attr_name, default_value)
+
+        if type(width) is str:
+            width = width.lower()
+
+            if width.endswith("m"):
+                width = width[:-1].strip()
+
+            try:
+                width = float(width)
+            except BaseException as ex:
+                width = width
+        
+        return width
     
     def _get_value(self, node, attr_name, default_value=None):
         val = node.get(attr_name, default_value)
