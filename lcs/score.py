@@ -169,19 +169,12 @@ class LCSQueryEngine:
             print (ex)
             return ox.distance.euclidean_dist_vec(node_dest.y, node_dest.x, node_source.y, node_source.x)
 
-    def _has_any_tag(self, node, tags):
-        for tag in tags:
-            if node.get(tag, 'no') != 'no':
-                return True
-        
-        return False
-
     def _sidewalk_score(self, node):
         total_score = 0
 
         if node.get('edges_walk_dist', 1000) < INFRASTRUCTURE_CUTOFF_DIST:
             closest_street = node['edges_walk']
-            sidewalk_width = closest_street.get('width', self.default_sidewalk_width)
+            sidewalk_width = self._get_value(closest_street, 'width', self.default_sidewalk_width)
 
             if type(sidewalk_width) is list:
                 sidewalk_width = sidewalk_width[0]
@@ -196,16 +189,16 @@ class LCSQueryEngine:
             if sidewalk_width >= 2:
                 total_score += 1
 
-            if closest_street.get("lit", self.default_sidewalk_lit) == 'yes':
+            if self._get_value(closest_street, "lit", self.default_sidewalk_lit) == 'yes':
                 total_score += 1 
 
             if self._has_any_tag(node, ACCESSIBLE_TAGS):
                 total_score += 2
 
-            if closest_street.get("noise_db", 60) < 65:
+            if self._get_value(closest_street, "noise_db", 60) < 65:
                 total_score += 3
 
-            if closest_street.get("shaded", "no") == 'yes':
+            if self._get_value(closest_street, "shaded", "no") == 'yes':
                 total_score += 3
 
         return total_score
@@ -216,12 +209,12 @@ class LCSQueryEngine:
         if node.get('edges_bike_dist', 1000) < INFRASTRUCTURE_CUTOFF_DIST:
             closest_path = node['edges_bike']
 
-            if float(closest_path.get('width', self.default_bikepath_width)) < 1.5:
+            if float(self._get_value(closest_path, 'width', self.default_bikepath_width)) < 1.5:
                 return total_score
             
             total_score += 3
 
-            if closest_path.get("lit", self.default_bikepath_lit) == 'yes':
+            if self._get_value(closest_path, "lit", self.default_bikepath_lit) == 'yes':
                 total_score += 1 
 
             if self._has_any_tag(node, CYCLEWAY_BUFFER_TAGS):
@@ -234,20 +227,9 @@ class LCSQueryEngine:
 
         if node.get('edges_drive_dist', 1000) < INFRASTRUCTURE_CUTOFF_DIST:
             closest_street = node['edges_drive']
-            max_speed = closest_street.get('maxspeed', self.default_maxspeed)
+            max_speed = self._get_speed(node, 'maxspeed', self.default_maxspeed)
 
-            if type(max_speed) is list:
-                max_speed = max_speed[0]
-
-            if type(max_speed) is str:
-                max_speed = max_speed.lower()
-
-            if max_speed in self.config["parameters"]:
-                max_speed = self.config["parameters"][max_speed]
-            else:
-                max_speed = float(max_speed)
-
-            if closest_street.get("traffic_calming", "no") == 'yes':
+            if self._get_value(closest_street, "traffic_calming", "no") == 'yes':
                 total_score += 2
 
             if max_speed <= 30:
@@ -256,13 +238,45 @@ class LCSQueryEngine:
             if max_speed <= 15:
                 total_score += 1 
 
-            if closest_street.get("no_parking_enforced", "no") == 'yes':
+            if self._get_value(closest_street, "no_parking_enforced", "no") == 'yes':
                 total_score += 1
 
             if self._has_any_tag(node, PARKING_TAGS):
                 total_score += 1
 
         return total_score
+    
+    def _get_speed(self, node, attr_name, default_value):
+        max_speed = self._get_value(node, attr_name, default_value)
+
+        if type(max_speed) is str:
+            max_speed = max_speed.lower()
+
+        if max_speed in self.config["parameters"]:
+            max_speed = self.config["parameters"][max_speed]
+        
+        if type(max_speed) is str:
+            try:
+                max_speed = float(max_speed)
+            except BaseException as ex:
+                max_speed = default_value
+        
+        return max_speed
+    
+    def _get_value(self, node, attr_name, default_value=None):
+        val = node.get(attr_name, default_value)
+
+        if type(val) is list:
+            val = val[0]
+
+        return val
+    
+    def _has_any_tag(self, node, tags):
+        for tag in tags:
+            if node.get(tag, 'no') != 'no':
+                return True
+        
+        return False
 
     def _safe_query_graph(self, network_type=None, custom_filter=None):
         try:

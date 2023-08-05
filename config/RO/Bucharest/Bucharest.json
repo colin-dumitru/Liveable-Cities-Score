@@ -1,8 +1,8 @@
 {
-    "placeId": "Iasi, Iasi, RO",
-    "name": "Iasi",
+    "placeId": "Bucharest, RO",
+    "name": "Bucharest",
     "globals": {
-        "yearly_aqi": 20
+        "yearly_aqi": 152
     },
     "defaults": {
         "maxspeed": 50,

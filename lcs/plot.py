@@ -26,6 +26,6 @@ def plot_heatmap(config, df_residential, figsize=(12, 12)):
     cbar = plt.colorbar(ticks=[0, 1], shrink=0.3, orientation='horizontal', label='LCS Range', anchor=(0.0, 2), pad=0)
     cbar.ax.set_xticklabels(['0%', '100%'])
 
-    plt.suptitle(f"{config['name']} ({df_residential['lcs_perc'].mean():.2f}%)", fontsize=20)
+    plt.title(f"{config['name']} ({df_residential['lcs_perc'].mean():.2f}%)", fontsize=20)
 
     # plt.show()
