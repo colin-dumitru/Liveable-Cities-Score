@@ -1,0 +1,17 @@
+{
+    "placeId": "Brasov, Brasov, RO",
+    "name": "Brasov",
+    "globals": {
+        "yearly_aqi": 48
+    },
+    "defaults": {
+        "maxspeed": 50,
+        "sidewalk_width": 1.0,
+        "sidewalk_lit": "no",
+        "bikepath_width": 1.0,
+        "bikepath_lit": "no"
+    },
+    "parameters": {
+        "ro:urban": 50
+    }
+}

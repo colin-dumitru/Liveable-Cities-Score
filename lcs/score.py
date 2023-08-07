@@ -1,5 +1,6 @@
 import osmnx as ox
 import networkx as nx
+import pandas as pd
 import taxicab
 
 MAX_LCS = 77
