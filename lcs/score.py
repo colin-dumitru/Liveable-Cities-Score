@@ -1,6 +1,7 @@
 import osmnx as ox
 import networkx as nx
 import pandas as pd
+import numpy as np
 import taxicab
 
 MAX_LCS = 77
@@ -75,6 +76,7 @@ class LCSQueryEngine:
         self.place_id = config['placeId']
         self.defaults = config.get('defaults', {})
         self.globals = config.get('globals', {})
+        self.parameters = config.get('parameters', {})
 
         self.default_maxspeed = self.defaults.get('maxspeed', 50.0)
         self.default_sidewalk_width = self.defaults.get('sidewalk_width', 1.0)
@@ -106,13 +108,13 @@ class LCSQueryEngine:
 
         print ("  -> Calculating graph-based scores...")
 
-        df_residential['edges_walk'], df_residential['edges_walk_dist'] = ox.nearest_edges(df_path_walk, df_residential.centroid.x, df_residential.centroid.y, return_dist=True)
-        df_residential['edges_bike'], df_residential['edges_bike_dist'] = ox.nearest_edges(df_path_bike, df_residential.centroid.x, df_residential.centroid.y, return_dist=True)
-        df_residential['edges_drive'], df_residential['edges_drive_dist'] = ox.nearest_edges(df_path_drive, df_residential.centroid.x, df_residential.centroid.y, return_dist=True)
+        df_residential['edges_walk'], df_residential['edges_walk_dist'] = self._safe_nearest_edges(df_residential, df_path_walk)
+        df_residential['edges_bike'], df_residential['edges_bike_dist'] = self._safe_nearest_edges(df_residential, df_path_bike)
+        df_residential['edges_drive'], df_residential['edges_drive_dist'] = self._safe_nearest_edges(df_residential, df_path_drive)
 
-        df_residential['edges_walk'] = df_residential['edges_walk'].apply(lambda n: df_path_walk.edges[n])
-        df_residential['edges_bike'] = df_residential['edges_bike'].apply(lambda n: df_path_bike.edges[n])
-        df_residential['edges_drive'] = df_residential['edges_drive'].apply(lambda n: df_path_drive.edges[n])
+        df_residential['edges_walk'] = df_residential['edges_walk'].apply(lambda n: None if n is None else df_path_walk.edges[n])
+        df_residential['edges_bike'] = df_residential['edges_bike'].apply(lambda n: None if n is None else df_path_bike.edges[n])
+        df_residential['edges_drive'] = df_residential['edges_drive'].apply(lambda n: None if n is None else df_path_drive.edges[n])
 
         df_residential["lcs_sidewalk"] = df_residential.apply(self._sidewalk_score, axis=1)
         df_residential["lcs_bike_path"] = df_residential.apply(self._bike_path_score, axis=1)
@@ -173,7 +175,7 @@ class LCSQueryEngine:
     def _sidewalk_score(self, node):
         total_score = 0
 
-        if node.get('edges_walk_dist', 1000) < INFRASTRUCTURE_CUTOFF_DIST:
+        if node.get('edges_walk_dist', 1000) or 1000 < INFRASTRUCTURE_CUTOFF_DIST:
             closest_street = node['edges_walk']
             sidewalk_width = self._get_width(closest_street, 'width', self.default_sidewalk_width)
 
@@ -202,7 +204,7 @@ class LCSQueryEngine:
     def _bike_path_score(self, node):
         total_score = 0
 
-        if node.get('edges_bike_dist', 1000) < INFRASTRUCTURE_CUTOFF_DIST:
+        if node.get('edges_bike_dist', 1000) or 1000 < INFRASTRUCTURE_CUTOFF_DIST:
             closest_path = node['edges_bike']
 
             if float(self._get_width(closest_path, 'width', self.default_bikepath_width)) < 1.5:
@@ -221,7 +223,7 @@ class LCSQueryEngine:
     def _drive_path_score(self, node):
         total_score = 0
 
-        if node.get('edges_drive_dist', 1000) < INFRASTRUCTURE_CUTOFF_DIST:
+        if node.get('edges_drive_dist', 1000) or 1000 < INFRASTRUCTURE_CUTOFF_DIST:
             closest_street = node['edges_drive']
             max_speed = self._get_speed(node, 'maxspeed', self.default_maxspeed)
 
@@ -248,8 +250,8 @@ class LCSQueryEngine:
         if type(max_speed) is str:
             max_speed = max_speed.lower()
 
-        if max_speed in self.config["parameters"]:
-            max_speed = self.config["parameters"][max_speed]
+        if max_speed in self.parameters:
+            max_speed = self.parameters[max_speed]
         
         if type(max_speed) is str:
             try:
@@ -271,7 +273,8 @@ class LCSQueryEngine:
             try:
                 width = float(width)
             except BaseException as ex:
-                width = width
+                print (ex)
+                width = default_value
         
         return width
     
@@ -289,6 +292,12 @@ class LCSQueryEngine:
                 return True
         
         return False
+    
+    def _safe_nearest_edges(self, df_residential, G):
+        if len(G) == 0:
+            return None, None
+
+        return ox.nearest_edges(G, df_residential.centroid.x, df_residential.centroid.y, return_dist=True)
 
     def _safe_query_graph(self, network_type=None, custom_filter=None):
         try:
